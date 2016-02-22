@@ -1,2 +1,2 @@
 # datastructures
-Data structures such as linked list, vectors, etc
+Data structures for C such as linked list, vectors, etc
