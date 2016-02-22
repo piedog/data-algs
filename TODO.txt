@@ -1,0 +1,6 @@
+Tasks TODO:
+Encapsulate node manipulation into a list object
+Improve error handling
+Come up with a way to any 
+This currently only handles list type (double link) structures. Add other types such as binary tree, vectors
+So far, the test driver only deals with strings. Need to allow generic types as well.
