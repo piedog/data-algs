@@ -1,85 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
+#include "gdd_node.h"
+#include "gdd_errorhandling.h"
 
 
-typedef struct _Container {
-    size_t          size;
-    void           *data;
-    struct _Container *next;
-    struct _Container *prev;
-} Container_t;
-
-Container_t* Container_create(void* data, size_t size, Container_t *prev, Container_t *next);
-void Container_delete(Container_t *C);
-void Container_setNext(Container_t *C, Container_t *next);
-void Container_setPrev(Container_t *C, Container_t *prev);
-
-void Insert(Container_t *C, Container_t *newC);
-Container_t *GetByIndex(Container_t *C, size_t index);
-void IterateAndShow(Container_t *first);
-void ReverseIterateAndShow(Container_t *last);
-size_t CountNodes(Container_t *C);
-
-void Linklist_error(const char *const msg);
-
-/** ===========================================================================
- **/
-
-void Linklist_error(const char *const msg)
-{
-    fprintf(stderr, "Linklist error: %s\n", msg);
-    exit(-1);
-}
-/** ===========================================================================
- **/
-
-Container_t* Container_create(void* data, size_t size, Container_t *prev, Container_t *next)
-{
-    Container_t *C = malloc(sizeof(Container_t));
-    if (!C) Linklist_error("could not allocate mem for Container_t");
-    C->data = malloc(size);
-    if (!C->data) Linklist_error("could not allocate mem for Container_t data");
-    memcpy(C->data, data, size);
-    C->prev = prev;
-    C->next = next;
-    C->size = size;
-    return C;
-}
-
-void Container_delete(Container_t *C)
-{
-    Container_t *newNext = NULL;
-    Container_t *newPrev = NULL;
-    if (!C) return;
-
-    if (C->prev) {
-        newPrev = C->prev;
-        newPrev->next = newNext;
-    }
-
-    if (C->next) {
-        newNext = C->next;
-        newNext->prev = newPrev;
-    }
-
-    free(C->data);
-}
+void Insert(GDDNode_t *C, GDDNode_t *newC);
+GDDNode_t *GetByIndex(GDDNode_t *C, size_t index);
+void IterateAndShow(GDDNode_t *first);
+void ReverseIterateAndShow(GDDNode_t *last);
+size_t CountNodes(GDDNode_t *C);
 
 
-void Container_setNext(Container_t *C, Container_t *next)
-{
-    C->next = next;
-}
 
-void Container_setPrev(Container_t *C, Container_t *prev)
-{
-    C->prev = prev;
-}
-
-
-Container_t *GetByIndex(Container_t *C, size_t index)
+GDDNode_t *GetByIndex(GDDNode_t *C, size_t index)
 {
     size_t idx = 0;
     if (!C) return NULL;
@@ -92,9 +26,9 @@ Container_t *GetByIndex(Container_t *C, size_t index)
 }
 
 
-void Insert(Container_t *C, Container_t *Cx)
+void Insert(GDDNode_t *C, GDDNode_t *Cx)
 {
-    /**  Inserts containter Cx in front of container C
+    /**  Inserts node Cx in front of node C
                 Inserts Cx between C1 and C
                              insert Cx here
                                    |
@@ -120,7 +54,7 @@ void Insert(Container_t *C, Container_t *Cx)
 
 
 
-void IterateAndShow(Container_t *C)
+void IterateAndShow(GDDNode_t *C)
 {
     int n=0;
     while (C) {
@@ -132,7 +66,7 @@ void IterateAndShow(Container_t *C)
 
 
 
-void ReverseIterateAndShow(Container_t *C)
+void ReverseIterateAndShow(GDDNode_t *C)
 {
     int n=0;
     while (C) {
@@ -142,7 +76,7 @@ void ReverseIterateAndShow(Container_t *C)
     }
 }
 
-size_t CountNodes(Container_t *C)
+size_t CountNodes(GDDNode_t *C)
 {
     int n=0;
     while (C) {
@@ -153,13 +87,13 @@ size_t CountNodes(Container_t *C)
 }
 
 
-void DeleteAllNodes(Container_t *C)
+void DeleteAllNodes(GDDNode_t *C)
 {
-    Container_t *tmpC = C;
+    GDDNode_t *tmpC = C;
     while (C) {
         tmpC = C;
         C = C->next;
-        Container_delete(tmpC);
+        GDDNode_delete(tmpC);
     }
 }
 
@@ -182,9 +116,9 @@ void DeleteAllNodes(Container_t *C)
     char **text = textStrings;
     char dataToInsert[] = "data to be inserted";
     char moreDataToInsert[] = "insert this at beginning of list";
-    Container_t *curOne=NULL, *lstOne=NULL, *first=NULL;
-    Container_t *container = NULL;
-    Container_t *newOne = NULL;
+    GDDNode_t *curOne=NULL, *lstOne=NULL, *first=NULL;
+    GDDNode_t *node = NULL;
+    GDDNode_t *newOne = NULL;
     size_t numNodes;
     int i;
 
@@ -193,9 +127,9 @@ void DeleteAllNodes(Container_t *C)
      ***/
     while (*text) {
         fprintf(stdout, "adding [%s]\n", *text);
-        curOne = Container_create(*text, strlen(*text)+1, lstOne, NULL);
+        curOne = GDDNode_create(*text, strlen(*text)+1, lstOne, NULL);
         if (!first) first = curOne;
-        if (lstOne) Container_setNext(lstOne, curOne);
+        if (lstOne) GDDNode_setNext(lstOne, curOne);
         lstOne = curOne;
         *text++;
     }
@@ -209,18 +143,18 @@ void DeleteAllNodes(Container_t *C)
     /*** create a new node and insert
          Note: first needs to be updated if we insert at beginning of list
      ***/
-    newOne = Container_create(dataToInsert, strlen(dataToInsert)+1, NULL, NULL);
-    container = GetByIndex(first, 3);
-    fprintf(stdout,"get by index:[%s]\n", container->data);
+    newOne = GDDNode_create(dataToInsert, strlen(dataToInsert)+1, NULL, NULL);
+    node = GetByIndex(first, 3);
+    fprintf(stdout,"get by index:[%s]\n", node->data);
     fprintf(stdout,"new one     :[%s]\n", newOne->data);
-    Insert(container,newOne);
+    Insert(node,newOne);
     IterateAndShow(first);
     ReverseIterateAndShow(lstOne);
 
     /*** Insert at beginning of list
      ***/
-    newOne = Container_create(moreDataToInsert, strlen(moreDataToInsert)+1, NULL, first);
-    Container_setPrev(first, newOne);
+    newOne = GDDNode_create(moreDataToInsert, strlen(moreDataToInsert)+1, NULL, first);
+    GDDNode_setPrev(first, newOne);
     first = newOne;
     IterateAndShow(first);
     ReverseIterateAndShow(lstOne);
@@ -229,8 +163,8 @@ void DeleteAllNodes(Container_t *C)
      ***/
     numNodes = CountNodes(first);
     for (i=0; i<numNodes+2; i++) {
-        if (container = GetByIndex(first, i)) {
-            fprintf(stdout,"[%3d][%s]\n", i, container->data);
+        if (node = GetByIndex(first, i)) {
+            fprintf(stdout,"[%3d][%s]\n", i, node->data);
         }
         else {
             fprintf(stdout,"[%3d][%s]\n", i, "null");

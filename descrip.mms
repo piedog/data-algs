@@ -11,10 +11,10 @@
 !
 
 PGM_C1 = tstc_test
-OBJ_C1 = tstc_test.obj
+OBJ_C1 = tstc_test.obj,gdd_errorhandling.obj
 
-PGM_C2 = container
-OBJ_C2 = container.obj
+PGM_C2 = tstc_node
+OBJ_C2 = tstc_node.obj,gdd_node.obj,gdd_errorhandling.obj
 
 PGMTST3 =
 OBJTST3 =
@@ -38,7 +38,7 @@ LINKFLAGS = /full/MAP/symbol_table/cross_ref
 .ENDIF
 
 ! ===============================================================
-all : container.exe
+all : tstc_node.exe
 	@ write sys$output "All targets built"
 
 ! Link target
@@ -89,20 +89,19 @@ $(PGMTST5).exe : $(OBJTST5)
 !!	FORTRAN $(FFLAGS) $(MMS$SOURCE)
 !! =======================================================================
 
-container.obj : container.c
+gdd_node.obj : gdd_node.c gdd_node.h gdd_errorhandling.h
 	cc $(CFLAGS) $(MMS$SOURCE)
 
-tstc_test1.obj : tstc_test1.c
+gdd_errorhandling.obj : gdd_errorhandling.c gdd_errorhandling.h
+	cc $(CFLAGS) $(MMS$SOURCE)
+
+tstc_node.obj : tstc_node.c gdd_node.h gdd_errorhandling.h
 	cc $(CFLAGS) $(MMS$SOURCE)
 
 tstf_fortran.obj : tstf_fortran.for
 	FORTRAN $(FFLAGS) $(MMS$SOURCE)
 
 fxml_bb2doc.obj : fxml_bb2doc.c
-	cc $(CFLAGS) $(MMS$SOURCE) -
-	/include=([DRVCHK.ROBERT.share.expat-2], [DRVCHK.ROBERT.share.dac_clib])
-
-stringmod.obj : stringmod.c
 	cc $(CFLAGS) $(MMS$SOURCE) -
 	/include=([DRVCHK.ROBERT.share.expat-2], [DRVCHK.ROBERT.share.dac_clib])
 
