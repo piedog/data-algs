@@ -5,7 +5,7 @@
 /** ===========================================================================
  **/
 
-void Linklist_error(const char *const msg)
+void GDD_handleError(const char *const msg)
 {
     fprintf(stderr, "Linklist error: %s\n", msg);
     exit(-1);

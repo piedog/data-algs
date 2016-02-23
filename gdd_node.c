@@ -7,12 +7,12 @@
 /** ===========================================================================
  **/
 
-GDDNode_t* GDDNode_create(void* data, size_t size, GDDNode_t *prev, GDDNode_t *next)
+GDDNode_t* GDDNode_create(const void* const data, size_t size, GDDNode_t *prev, GDDNode_t *next)
 {
     GDDNode_t *C = malloc(sizeof(GDDNode_t));
-    if (!C) Linklist_error("could not allocate mem for GDDNode_t");
+    if (!C) GDD_handleError("could not allocate mem for GDDNode_t");
     C->data = malloc(size);
-    if (!C->data) Linklist_error("could not allocate mem for GDDNode_t data");
+    if (!C->data) GDD_handleError("could not allocate mem for GDDNode_t data");
     memcpy(C->data, data, size);
     C->prev = prev;
     C->next = next;
@@ -49,4 +49,17 @@ void GDDNode_setPrev(GDDNode_t *C, GDDNode_t *prev)
 {
     C->prev = prev;
 }
+
+GDDNode_t *GDDNode_getNext(GDDNode_t *C)
+{
+    if (!C) return NULL;
+    return C->next;
+}
+
+GDDNode_t *GDDNode_getPrev(GDDNode_t *C)
+{
+    if (!C) return NULL;
+    return C->prev;
+}
+
 

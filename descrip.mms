@@ -16,8 +16,8 @@ OBJ_C1 = tstc_test.obj,gdd_errorhandling.obj
 PGM_C2 = tstc_node
 OBJ_C2 = tstc_node.obj,gdd_node.obj,gdd_errorhandling.obj
 
-PGMTST3 =
-OBJTST3 =
+PGM_C3 = tstc_list
+OBJ_C3 = tstc_list.obj, gdd_list.obj, gdd_node.obj, gdd_errorhandling.obj
 
 PGMTST4 =
 OBJTST4 =
@@ -38,7 +38,7 @@ LINKFLAGS = /full/MAP/symbol_table/cross_ref
 .ENDIF
 
 ! ===============================================================
-all : tstc_node.exe
+all : tstc_node.exe tstc_list.exe
 	@ write sys$output "All targets built"
 
 ! Link target
@@ -56,8 +56,11 @@ $(PGM_C1).exe : $(OBJ_C1)
 
 $(PGM_C2).exe : $(OBJ_C2)
 	link $(LINKFLAGS) /exec=$(PGM_C2) -
-	$(OBJ_C2), -
-	DB1:[DRVCHK.ROBERT.SHARE.DAC_CLIB]dac_clib/L
+	$(OBJ_C2)
+
+$(PGM_C3).exe : $(OBJ_C3)
+	link $(LINKFLAGS) /exec=$(PGM_C3) -
+	$(OBJ_C3)
 
 ! Link target
 $(PGMTST3).exe : $(OBJTST3)
@@ -88,6 +91,12 @@ $(PGMTST5).exe : $(OBJTST5)
 !!tst_fxmltodoc2.obj : tst_fxmltodoc2.for
 !!	FORTRAN $(FFLAGS) $(MMS$SOURCE)
 !! =======================================================================
+
+tstc_list.obj : tstc_list.c gdd_node.h gdd_errorhandling.h gdd_list.h
+	cc $(CFLAGS) $(MMS$SOURCE)
+
+gdd_list.obj : gdd_list.c gdd_node.h gdd_errorhandling.h gdd_list.h
+	cc $(CFLAGS) $(MMS$SOURCE)
 
 gdd_node.obj : gdd_node.c gdd_node.h gdd_errorhandling.h
 	cc $(CFLAGS) $(MMS$SOURCE)
