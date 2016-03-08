@@ -1,6 +1,6 @@
 Tasks TODO:
-Encapsulate node manipulation into a list object
+Encapsulate node manipulation into a list object (done)
 Improve error handling
-Come up with a way to any 
+Come up with a way to handle data of any type. So far, only strings have been tested. Need to handle structures that have pointers to structures.  This will require some kind of constructor, destructor, and copy constructor function to be passed to the Node create and destroy functions and managed by the List object.
 This currently only handles list type (double link) structures. Add other types such as binary tree, vectors
-So far, the test driver only deals with strings. Need to allow generic types as well.
+
