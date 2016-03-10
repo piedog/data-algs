@@ -46,7 +46,7 @@ int main(int argc, char** argv)
     GDDList_setShowFunction(L, (GDDFncShow)displayNode);
     while (*text) {
         fprintf(stdout, "adding to list: [%s]\n",*text);
-        GDDList_addNode(L, *text, strlen(*text)+1);
+        GDDList_addNode(L, *text);
         *text++;
     }
 

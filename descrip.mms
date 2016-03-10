@@ -38,7 +38,7 @@ LINKFLAGS = /full/MAP/symbol_table/cross_ref
 .ENDIF
 
 ! ===============================================================
-all : tstc_node.exe tstc_list.exe
+all : tstc_node.exe,tstc_list.exe
 	@ write sys$output "All targets built"
 
 ! Link target

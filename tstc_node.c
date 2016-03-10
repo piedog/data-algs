@@ -59,7 +59,7 @@ void IterateAndShow(GDDNode_t *C)
     int n=0;
     while (C) {
         n++;
-        fprintf(stdout, "%3d:(%3d) %s\n", n, C->size, (char*)C->data);
+        fprintf(stdout, "%3d:(%3d) %s\n", n, strlen((char*)C->data), (char*)C->data);
         C = C->next;
     }
 }
@@ -71,7 +71,7 @@ void ReverseIterateAndShow(GDDNode_t *C)
     int n=0;
     while (C) {
         n++;
-        fprintf(stdout, "%3d:(%3d) %s\n", n, C->size, (char*)C->data);
+        fprintf(stdout, "%3d:(%3d) %s\n", n, strlen((char*)C->data), (char*)C->data);
         C = C->prev;
     }
 }
@@ -127,7 +127,7 @@ void DeleteAllNodes(GDDNode_t *C)
      ***/
     while (*text) {
         fprintf(stdout, "adding [%s]\n", *text);
-        curOne = GDDNode_create(*text, strlen(*text)+1, lstOne, NULL);
+        curOne = GDDNode_create(*text, lstOne, NULL);
         if (!first) first = curOne;
         if (lstOne) GDDNode_setNext(lstOne, curOne);
         lstOne = curOne;
@@ -143,7 +143,7 @@ void DeleteAllNodes(GDDNode_t *C)
     /*** create a new node and insert
          Note: first needs to be updated if we insert at beginning of list
      ***/
-    newOne = GDDNode_create(dataToInsert, strlen(dataToInsert)+1, NULL, NULL);
+    newOne = GDDNode_create(dataToInsert, NULL, NULL);
     node = GetByIndex(first, 3);
     fprintf(stdout,"get by index:[%s]\n", node->data);
     fprintf(stdout,"new one     :[%s]\n", newOne->data);
@@ -153,13 +153,14 @@ void DeleteAllNodes(GDDNode_t *C)
 
     /*** Insert at beginning of list
      ***/
-    newOne = GDDNode_create(moreDataToInsert, strlen(moreDataToInsert)+1, NULL, first);
+    newOne = GDDNode_create(moreDataToInsert, NULL, first);
     GDDNode_setPrev(first, newOne);
     first = newOne;
     IterateAndShow(first);
     ReverseIterateAndShow(lstOne);
 
     /*** Test GetByIndex.
+         The last two nodes should be null, since they do not exist
      ***/
     numNodes = CountNodes(first);
     for (i=0; i<numNodes+2; i++) {

@@ -21,7 +21,7 @@ typedef struct _GDDList {
 GDDList_t * GDDList_create(GDDFncCreate fnCreate, GDDFncDestroy fnDestroy);
 
 void GDDList_destroy(GDDList_t *L);
-void GDDList_addNode(GDDList_t *L, const void * const data, size_t size);
+void GDDList_addNode(GDDList_t *L, const void * const data);
 void GDDList_iterateAndShow(GDDList_t *L, void *userdata);
 void GDDList_setShowFunction(GDDList_t *L, GDDFncShow fnc);
 void GDDList_showList(GDDList_t *L);
