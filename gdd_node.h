@@ -9,7 +9,7 @@ typedef struct _GDDNode {
     struct _GDDNode *prev;
 } GDDNode_t;
 
-GDDNode_t* GDDNode_create(const void* const data, size_t size, GDDNode_t *prev, GDDNode_t *next);
+GDDNode_t* GDDNode_create(void *data, size_t size, GDDNode_t *prev, GDDNode_t *next);
 void GDDNode_delete(GDDNode_t *C);
 void GDDNode_setNext(GDDNode_t *C, GDDNode_t *next);
 void GDDNode_setPrev(GDDNode_t *C, GDDNode_t *prev);
