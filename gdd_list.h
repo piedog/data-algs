@@ -1,6 +1,10 @@
 #ifndef __GDD_LIST_H__
 #define __GDD_LIST_H__
 
+#include <stdio.h>
+#include <stdlib.h>
+#include "gdd_node.h"
+
 typedef void* (*GDDFncCreate)(const void *const, void*);
 typedef void (*GDDFncDestroy)(void*);
 typedef void (*GDDFncShow)(void*, void*);  /** pointers to:  payload, user data  **/

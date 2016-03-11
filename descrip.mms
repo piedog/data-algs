@@ -19,11 +19,11 @@ OBJ_C2 = tstc_node.obj,gdd_node.obj,gdd_errorhandling.obj
 PGM_C3 = tstc_list
 OBJ_C3 = tstc_list.obj, gdd_list.obj, gdd_node.obj, gdd_errorhandling.obj
 
-PGMTST4 =
-OBJTST4 =
+PGM_C4 = tstc_read
+OBJ_C4 = tstc_read.obj
 
-PGMTST5 =
-OBJTST5 =
+PGM_C5 = tstc_wordlist
+OBJ_C5 = tstc_wordlist.obj, gdd_list.obj, gdd_node.obj, gdd_errorhandling.obj
 
 EXT_OBJS =
 
@@ -38,7 +38,7 @@ LINKFLAGS = /full/MAP/symbol_table/cross_ref
 .ENDIF
 
 ! ===============================================================
-all : tstc_node.exe,tstc_list.exe
+all : tstc_node.exe,tstc_list.exe,tstc_read.exe,tstc_wordlist.exe
 	@ write sys$output "All targets built"
 
 ! Link target
@@ -62,27 +62,13 @@ $(PGM_C3).exe : $(OBJ_C3)
 	link $(LINKFLAGS) /exec=$(PGM_C3) -
 	$(OBJ_C3)
 
-! Link target
-$(PGMTST3).exe : $(OBJTST3)
-	link $(LINKFLAGS) /exec=$(PGMTST3) -
-	$(OBJTST3), -
-	$(EXT_OBJS),-
-	DB1:[DRVCHK.ROBERT.work.myfutils]myfutils/L,-
-	DAC_LIB/L,-
-	DB1:[DRVCHK.ROBERT.SHARE.DAC_CLIB]dac_clib/L,-
-	DB1:[DRVCHK.ROBERT.SHARE.EXPAT-2]expat.olb/L
+$(PGM_C4).exe : $(OBJ_C4)
+	link $(LINKFLAGS) /exec=$(PGM_C4) -
+	$(OBJ_C4)
 
-$(PGMTST4).exe : $(OBJTST4)
-	link $(LINKFLAGS) /exec=$(PGMTST4) -
-	$(OBJTST4),-
-	DB1:[DRVCHK.ROBERT.SHARE.DAC_CLIB]dac_clib/L
-
-$(PGMTST5).exe : $(OBJTST5)
-	link $(LINKFLAGS) /exec=$(PGMTST5) -
-	$(OBJTST5),-
-	dac_lib/L,-
-	DB1:[DRVCHK.ROBERT.SHARE.DAC_CLIB]dac_clib/L
-
+$(PGM_C5).exe : $(OBJ_C5)
+	link $(LINKFLAGS) /exec=$(PGM_C5) -
+	$(OBJ_C5)
 
 ! ===============================================================
 !  Compile targets
@@ -105,6 +91,12 @@ gdd_errorhandling.obj : gdd_errorhandling.c gdd_errorhandling.h
 	cc $(CFLAGS) $(MMS$SOURCE)
 
 tstc_node.obj : tstc_node.c gdd_node.h gdd_errorhandling.h
+	cc $(CFLAGS) $(MMS$SOURCE)
+
+tstc_read.obj : tstc_read.c
+	cc $(CFLAGS) $(MMS$SOURCE)
+
+tstc_wordlist.obj : tstc_wordlist.c gdd_node.h gdd_errorhandling.h
 	cc $(CFLAGS) $(MMS$SOURCE)
 
 tstf_fortran.obj : tstf_fortran.for
