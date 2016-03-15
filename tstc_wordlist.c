@@ -204,24 +204,19 @@ int main(int argc, char **argv)
         }
 
         if (fp) fclose(fp);
-   //   GDDList_iterateAndShow(L, NULL);
 
+        /***  iterator tests on list   **/
         {
-            Criteria_t criteria;
-            //void *II = NULL;   /** initialize but do not modify  **/
             GDDListIterator_t II = { NULL, TRUE };  /**  initialize to this: next elem=NULL, firstTime=TRUE   **/
-
-            criteria.word = "Cu ius omnis";
-            criteria.noccur = 1;
-
-            while ( (PG = GDDList_iterateWithFilter(L, wordsearch, &criteria, &II)) ) {
+            while ((PG = GDDList_iterate(L, &II))) {
                 displayNode(PG, NULL);
             }
         }
 
         {
+            Criteria_t criteria = { "Cu ius omnis", 2 };
             GDDListIterator_t II = { NULL, TRUE };  /**  initialize to this: next elem=NULL, firstTime=TRUE   **/
-            while ((PG = GDDList_iterate(L, &II))) {
+            while ( (PG = GDDList_iterateWithFilter(L, wordsearch, &criteria, &II)) ) {
                 displayNode(PG, NULL);
             }
         }
