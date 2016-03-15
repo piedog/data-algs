@@ -10,6 +10,11 @@ typedef struct _Paragraph {
     char **sentences;
 } Paragraph_t;
 
+typedef struct Criteria_ {
+    char *word;   /** look for this word that occurs N times **/
+    int   noccur;    
+}  Criteria_t;
+
 
 Paragraph_t * makeParagraph(unsigned int pnum)
 {
@@ -49,7 +54,7 @@ void showBuffer(const char * const data, size_t N)
 }
 
 
-void saveSentence(const char *const data, size_t N, char *target, unsigned *p)
+void saveSentence(const char *const data, size_t N, char *target, unsigned int *p)
 {
     memcpy(target+*p, data, N);
     (*p)+= N;
@@ -90,17 +95,39 @@ void displayNode(void* data, void *userdata)
 {
     Paragraph_t *P = (Paragraph_t*)data;
     char **text = P->sentences;
+    unsigned int j, i=0;
+    fprintf(stdout,"Par ID:[%3d],nsent:[%3d],text:[%x]\n",P->pnum,P->nSentences, text);
     while (*text) {
-        fprintf(stdout,"%3d %3d [%s]\n",P->pnum,P->nSentences, *text);
+        i++;
+        fprintf(stdout,"sentence #:[%d][%s]\n",i,*text);
         *text++;
     }
+}
+
+
+int wordsearch(void* data, void *userdata)
+{
+    Criteria_t *criteria = userdata;
+    
+    Paragraph_t *P = data;
+    char **S=NULL;
+    int N=0;
+    if (!P) return FALSE;
+    if (!userdata) return TRUE;
+    S = P->sentences;
+    while (*S) {
+        if (strstr(*S, criteria->word)) N++;
+        if (N == criteria->noccur) return TRUE;
+        *S++;
+    }
+    return FALSE;
 }
 
 
 int main(int argc, char **argv)
 {
     FILE *fp = NULL;
-    char *filename = "loremipsum.txt";
+    char *filename = "loremipsum_2.txt";
     int nbRtn = 0;
     char buffer[1024];
     char saveBuffer[1024];
@@ -111,78 +138,96 @@ int main(int argc, char **argv)
     Paragraph_t *PG = NULL;
     GDDList_t *L = NULL;
 
-    unsigned pos = 0;
+    unsigned int pos;
     int  endOfP;
-    unsigned int paragraphNum = 0;
-
-    memset(buffer,'\0', sizeof(buffer));
-    memset(saveBuffer,'\0', sizeof(saveBuffer));
-
-    fp = fopen(filename, "rb");
-    if (!fp) fprintf(stdout,"fp is null\n");
-
-    L = GDDList_create((GDDFncCreate)constructNode, (GDDFncDestroy)destructNode);
-    GDDList_setShowFunction(L, (GDDFncShow)displayNode);
-
-    PG = makeParagraph(paragraphNum);
+    unsigned int i;
+    unsigned int paragraphNum;
 
 
-    while ((nbRtn = fread(buffer, 1, sizeof(buffer), fp)) > 0) {
-
-        cur = buffer;
-        /**
-         ** look for all the end of sentence ('.'). When found, save the complete sentence
-         **/
-        while ( (tmp=strchr(cur,'.'))  && cur < buffer+sizeof(buffer)-1) {
-            /***
-             *** Found end of sentence; save it
-             ***/
-
-            /**
-             **  Test if end of paragraph (is the next character an ascii character?)
-             **/
-            if (tmp-cur+1 < sizeof(buffer) && *(tmp+1) != ' ') {
-                endOfP = TRUE;
-            }
-            else {
-                endOfP = FALSE;
-            }
-
-            saveSentence(cur, tmp-cur, saveBuffer, &pos);
-            addSentence(PG, saveBuffer);
-
-
-            if (endOfP) {
-                paragraphNum++;
-                PG = makeParagraph(paragraphNum);
-                GDDList_addNode(L, PG);
-            }
-
-
-            memset(saveBuffer,'\0', sizeof(saveBuffer));
-
-            tmp++;
-            cur = tmp;
-            if (cur < buffer+sizeof(buffer)-1 && *cur == ' ') {
-                cur++;
-            }
-            pos = 0;
-        }
-
-        /** If not end of sentence, then save what is in buffer. The pos variable keeps track of
-         ** of the next location where the data is to be written
-         **/
-        if (!tmp) {
-            saveSentence(cur, sizeof(buffer)-(cur-buffer), saveBuffer, &pos);
-        }
+    for (i=0; i<1; i++) {
+        fprintf(stdout,"================= [%d] ===================================\n",i);
 
         memset(buffer,'\0', sizeof(buffer));
+        memset(saveBuffer,'\0', sizeof(saveBuffer));
+        pos = 0;
 
+        fp = fopen(filename, "rb");
+        if (!fp) fprintf(stdout,"fp is null\n");
+
+        L = GDDList_create((GDDFncCreate)constructNode, (GDDFncDestroy)destructNode);
+        GDDList_setShowFunction(L, (GDDFncShow)displayNode);
+
+        paragraphNum = 1;
+        PG = makeParagraph(paragraphNum);
+        GDDList_addNode(L, PG);
+
+        while ((nbRtn = fread(buffer, 1, sizeof(buffer), fp)) > 0) {
+            cur = buffer;
+            while ( (tmp=strchr(cur,'.'))  && cur < buffer+sizeof(buffer)-1) {
+                /***
+                 *** Found end of sentence; save it
+                 ***/
+
+                /**
+                 **  Test if end of paragraph (is the next character an ascii character?)
+                 **/
+                if (tmp-cur+1 < sizeof(buffer) && *(tmp+1) != ' ') {
+                    endOfP = TRUE;
+                }
+                else {
+                    endOfP = FALSE;
+                }
+                saveSentence(cur, tmp-cur, saveBuffer, &pos);   /**  concatenate sentence to what has already been captured **/
+                addSentence(PG, saveBuffer);
+
+                if (endOfP) {
+                    paragraphNum++;
+                    PG = makeParagraph(paragraphNum);
+                    GDDList_addNode(L, PG);
+                }
+
+                memset(saveBuffer,'\0', sizeof(saveBuffer));
+                tmp++;
+                cur = tmp;
+                if (cur < buffer+sizeof(buffer)-1 && *cur == ' ') {
+                    cur++;
+                }
+                pos = 0;
+            }
+            /** If not end of sentence, then save what is in buffer. The pos variable keeps track of
+             ** of the next location where the data is to be written
+             **/
+            if (!tmp) {
+                saveSentence(cur, sizeof(buffer)-(cur-buffer), saveBuffer, &pos);
+            }
+            memset(buffer,'\0', sizeof(buffer));
+        }
+
+        if (fp) fclose(fp);
+   //   GDDList_iterateAndShow(L, NULL);
+
+        {
+            Criteria_t criteria;
+            //void *II = NULL;   /** initialize but do not modify  **/
+            GDDListIterator_t II = { NULL, TRUE };  /**  initialize to this: next elem=NULL, firstTime=TRUE   **/
+
+            criteria.word = "Cu ius omnis";
+            criteria.noccur = 1;
+
+            while ( (PG = GDDList_iterateWithFilter(L, wordsearch, &criteria, &II)) ) {
+                displayNode(PG, NULL);
+            }
+        }
+
+        {
+            GDDListIterator_t II = { NULL, TRUE };  /**  initialize to this: next elem=NULL, firstTime=TRUE   **/
+            while ((PG = GDDList_iterate(L, &II))) {
+                displayNode(PG, NULL);
+            }
+        }
+
+        GDDList_destroy(L);
+        L = NULL;
     }
-
-
-    if (fp) fclose(fp);
-    GDDList_iterateAndShow(L, NULL);
-    GDDList_destroy(L);
     return 0;
 }

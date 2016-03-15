@@ -7,20 +7,6 @@
 #include "gdd_list.h"
 
 
-/** ===========================================================================
- **/
-
-/**        example of user function to pass to GDD_iterateAndShow
-
-                 void displayNode(GDDNode_t *N, void *user) {
-                     int n = *(int*)user;
-                     fprintf(stdout, "%3d:(%3d) %s\n", n, N->size, (char*)N->data);
-                 }
- **/
-
-/** ===========================================================================
- **/
-
 void GDDList_iterateAndShow(GDDList_t *L, void *userdata)
 {
     int n = 0;
@@ -33,6 +19,51 @@ void GDDList_iterateAndShow(GDDList_t *L, void *userdata)
     }
 }
 
+
+void *GDDList_iterate(GDDList_t *L, GDDListIterator_t *II)
+{
+    GDDNode_t *curNode = NULL;
+    if (!L) return NULL;
+    if (II->firstTime) {           //  first one
+        II->next = L->head;
+        II->firstTime = FALSE;
+    }
+    if (!II->next) return NULL;    // list has been exhausted
+
+    curNode = (GDDNode_t*)II->next;
+
+    II->next = curNode->next;
+    return curNode->data;
+}
+
+
+
+void *GDDList_iterateWithFilter(GDDList_t *L, GDDFncFilter fnc, void *userdata, GDDListIterator_t *II)
+{
+    /** keep calling until return value is a NULL pointer          **/
+    /** iterator II must be initialized on first call      **/
+    int found;
+    GDDNode_t *curNode = NULL;
+    if (!L) return NULL;
+    if (II->firstTime) {
+        II->next = L->head;
+        II->firstTime = FALSE;
+    }
+    if (!II->next) return NULL;   // that was the last one
+    curNode = II->next;
+
+
+    while (curNode && !(found = fnc(curNode->data, userdata))) {
+        curNode = curNode->next;
+    }
+
+    if (found) {
+        II->next = curNode->next;
+        return curNode->data;
+    }
+
+    return NULL;
+}
 
 GDDList_t * GDDList_create(GDDFncCreate fnCreate, GDDFncDestroy fnDestroy)
 {
@@ -57,7 +88,7 @@ void GDDList_destroy(GDDList_t *L)
         while (node) {
             tmp = node;
             if (L->fnDestroy) L->fnDestroy(node->data); /** this deletes memory for the data in the node **/
-            GDDNode_delete(node);     /** this deletes memory for the node info, but not the data  **/
+            GDDNode_delete(node);     /** this deletes memory for the node info, but not the payload  **/
             node = tmp->next;
         }
     }

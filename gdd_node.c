@@ -36,6 +36,7 @@ void GDDNode_delete(GDDNode_t *C)
         newNext = C->next;
         newNext->prev = newPrev;
     }
+    free(C);    /** free memory for this node.  Payload memory must be freed by caller  **/
 }
 
 
