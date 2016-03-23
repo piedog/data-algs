@@ -86,10 +86,10 @@ void GDDList_destroy(GDDList_t *L)
         GDDNode_t *node = L->head;
         GDDNode_t *tmp = NULL;
         while (node) {
-            tmp = node;
+            tmp = node->next;
             if (L->fnDestroy) L->fnDestroy(node->data); /** this deletes memory for the data in the node **/
             GDDNode_delete(node);     /** this deletes memory for the node info, but not the payload  **/
-            node = tmp->next;
+            node = tmp;
         }
     }
     L = NULL;

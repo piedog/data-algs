@@ -25,6 +25,9 @@ OBJ_C4 = tstc_read.obj
 PGM_C5 = tstc_wordlist
 OBJ_C5 = tstc_wordlist.obj, gdd_list.obj, gdd_node.obj, gdd_errorhandling.obj
 
+PGM_C6 = tstc_cutils
+OBJ_C6 = tstc_cutils.obj, cutils.obj
+
 EXT_OBJS =
 
 .IFDEF BUILD
@@ -38,7 +41,8 @@ LINKFLAGS = /full/MAP/symbol_table/cross_ref
 .ENDIF
 
 ! ===============================================================
-all : tstc_node.exe,tstc_list.exe,tstc_read.exe,tstc_wordlist.exe
+!!!all : tstc_node.exe,tstc_list.exe,tstc_read.exe,tstc_wordlist.exe tstc_cutils.exe
+all : tstc_wordlist.exe
 	@ write sys$output "All targets built"
 
 ! Link target
@@ -70,6 +74,10 @@ $(PGM_C5).exe : $(OBJ_C5)
 	link $(LINKFLAGS) /exec=$(PGM_C5) -
 	$(OBJ_C5)
 
+$(PGM_C6).exe : $(OBJ_C6)
+	link $(LINKFLAGS) /exec=$(PGM_C6) -
+	$(OBJ_C6)
+
 ! ===============================================================
 !  Compile targets
 !
@@ -94,6 +102,9 @@ tstc_node.obj : tstc_node.c gdd_node.h gdd_errorhandling.h
 	cc $(CFLAGS) $(MMS$SOURCE)
 
 tstc_read.obj : tstc_read.c
+	cc $(CFLAGS) $(MMS$SOURCE)
+
+cutils.obj : cutils.c cutils.h
 	cc $(CFLAGS) $(MMS$SOURCE)
 
 tstc_wordlist.obj : tstc_wordlist.c gdd_node.h gdd_errorhandling.h
