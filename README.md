@@ -1,2 +1,2 @@
-# datastructures
-Data structures for C such as linked list, vectors, etc
+# Data Algorithms
+C Algorithms for manipulating data in structures such as linked list, vectors, etc
